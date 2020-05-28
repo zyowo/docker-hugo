@@ -1,0 +1,8 @@
+{
+  "versionFile": "Dockerfile",
+  "versionPattern": "^ENV HUGO_VERSION=\"?v?(?<version>[0-9.]+?)(?:-|\"?$)",
+  "sourcePaths": [
+    "Dockerfile",
+    "rootfs/**"
+  ]
+}

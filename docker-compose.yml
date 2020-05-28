@@ -1,0 +1,11 @@
+version: '3'
+services:
+  hugo:
+    image: ${IMAGE_BUILD:-snapserv/hugo:latest}
+    build: .
+    read_only: true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /run
+      - /tmp

@@ -1,0 +1,24 @@
+process:
+  hugo:
+    running: true
+
+port:
+  tcp6:1313:
+    listening: true
+    ip: ['::']
+
+file:
+  /cts/hugo: &file-hugo-dir
+    exists: true
+    owner: 'hugo'
+    group: 'hugo'
+    mode: '0700'
+    filetype: 'directory'
+
+  /cts/hugo/persistent: *file-hugo-dir
+  /cts/hugo/persistent/data: *file-hugo-dir
+
+http:
+  http://localhost:1313/:
+    status: 200
+    allow-insecure: true

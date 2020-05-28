@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  container-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 100
+
+      - name: Initialize repository context
+        run: |
+          _repository="${{ github.repository }}"
+          echo "::set-env name=IMAGE_NAME::${_repository##*/docker-}"
+          echo "::set-env name=IMAGE_SOURCES::$(jq -r '.sourcePaths | join(" ")' .workflow.json)"
+          echo "::set-env name=VERSION_FILE::$(jq -r '.versionFile' .workflow.json)"
+          echo "::set-env name=VERSION_PATTERN::$(jq -r '.versionPattern' .workflow.json)"
+
+      - name: Lint Dockerfile
+        uses: brpaz/hadolint-action@v1.1.0
+
+      - name: Install Goss
+        uses: e1himself/goss-installation-action@v1
+
+      - name: Build container image
+        uses: snapserv/action-container-builder@master
+        id: container_image
+        with:
+          publish: 'false'
+          target_repository: 'snapserv/${{ env.IMAGE_NAME }}'
+          target_registry_username: '${{ secrets.DOCKER_USERNAME }}'
+          target_registry_password: '${{ secrets.DOCKER_PASSWORD }}'
+          cache_repository: 'docker.pkg.github.com/${{ github.repository }}/${{ env.IMAGE_NAME }}-cache'
+          cache_registry_username: 'snapserv-bot'
+          cache_registry_password: '${{ secrets.SNAPSERV_BOT_TOKEN }}'
+
+      - name: Test image using dcgoss
+        run: |
+          dcgoss run ${{ env.IMAGE_NAME }}
+        env:
+          GOSS_FILE: '.goss.yaml'
+          GOSS_OPTS: '--color --retry-timeout 60s --sleep 1s'
+          IMAGE_BUILD: '${{ steps.container_image.outputs.build_output }}'
+
+      - name: Tag and push image
+        uses: snapserv/action-container-builder@master
+        with:
+          build: 'false'
+          tag_with_ref: 'true'
+          target_repository: 'snapserv/${{ env.IMAGE_NAME }}'
+          target_registry_username: '${{ secrets.DOCKER_USERNAME }}'
+          target_registry_password: '${{ secrets.DOCKER_PASSWORD }}'
+          cache_repository: 'docker.pkg.github.com/${{ github.repository }}/${{ env.IMAGE_NAME }}-cache'
+          cache_registry_username: 'snapserv-bot'
+          cache_registry_password: '${{ secrets.SNAPSERV_BOT_TOKEN }}'
+        if: >-
+          ${{
+            github.ref == 'refs/heads/master'
+            || startsWith(github.ref, 'refs/tags/')
+          }}
+
+      - name: Check if source files for image have changed
+        uses: marceloprado/has-changed-path@master
+        id: source_status
+        with:
+          paths: '${{ env.IMAGE_SOURCES }}'
+
+      - name: Tag as new version or revision if changed
+        uses: snapserv/action-autotagbot@master
+        with:
+          api_token: '${{ secrets.SNAPSERV_BOT_TOKEN }}'
+          source_file: '${{ env.VERSION_FILE }}'
+          version_pattern: '${{ env.VERSION_PATTERN }}'
+          tag_format: '{version}-{revision}'
+        if: >-
+          ${{
+            github.event_name == 'push'
+            && github.ref == 'refs/heads/master'
+            && steps.source_status.outputs.changed == 'true'
+          }}

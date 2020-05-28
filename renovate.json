@@ -1,0 +1,5 @@
+{
+  "extends": [
+    "github>snapserv/renovate-config:docker"
+  ]
+}
