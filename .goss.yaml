@@ -16,7 +16,6 @@ file:
     filetype: 'directory'
 
   /cts/hugo/persistent: *file-hugo-dir
-  /cts/hugo/persistent/data: *file-hugo-dir
 
 http:
   http://localhost:1313/:

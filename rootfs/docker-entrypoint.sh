@@ -8,7 +8,7 @@ if [ $# -ge 1 ]; then
 fi
 
 # Check if a site configuration exists, otherwise create a new one
-if [ ! -f /cts/hugo/persistent/data/config.toml ]; then
+if [ ! -f /cts/hugo/persistent/config.toml ]; then
   ctutil log "no config.toml found, generating empty page..."
   ctutil run -p hugo -- hugo new site .
 fi
@@ -17,4 +17,4 @@ fi
 exec ctutil run -p hugo -- hugo server \
   --bind="::" \
   --cacheDir="/tmp" \
-  --config="/etc/hugo-docker.toml,config.toml"
+  --config="config.toml"

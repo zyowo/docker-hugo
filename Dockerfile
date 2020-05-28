@@ -24,7 +24,7 @@ RUN true \
     # Prepare container runtime environment
     && ctutil account -u 2000 -g 2000 hugo \
     && ctutil directory -u hugo -g hugo -m 0700 \
-        /cts/hugo/persistent/data \
+        /cts/hugo/persistent \
     && true
 
 COPY --from=builder /build/bin/hugo /usr/local/bin/hugo
@@ -35,5 +35,5 @@ USER 2000
 EXPOSE 1313/tcp
 VOLUME [ "/cts/hugo/persistent" ]
 
-WORKDIR /cts/hugo/persistent/data
+WORKDIR /cts/hugo/persistent
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
