@@ -1,10 +1,10 @@
-FROM golang:1.14-alpine@sha256:c11dac79f0b25f3f3188429f8dd37cb6004021624b42085f745cb907ca1560a9 AS builder
+FROM golang:1.14.4-alpine3.12@sha256:2de21f4fe5c3557c31b716291a7986c0d54abbd282cd7fb43aaa484672b0c855 AS builder
 
 # renovate: datasource=github-tags depName=gohugoio/hugo
 ENV HUGO_VERSION="v0.71.1"
 
-# TODO: Integrate with Renovate once available as datasource
-ENV GIT_VERSION="2.24.3-r0"
+# renovate: datasource=repology depName=alpine_3_12/git
+ENV GIT_VERSION="2.26.2-r0"
 
 WORKDIR /build/src
 RUN true \
