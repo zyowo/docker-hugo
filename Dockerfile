@@ -18,7 +18,7 @@ RUN true \
     && apk del --purge --no-cache .build-deps \
     && true
 
-FROM snapserv/alpine:3.12.0-3@sha256:314d13b1784f96d74684dcfbd5107feef4ade85cd9940fbc0eeda94fe630ba6b
+FROM snapserv/alpine:3.12.0-4@sha256:314d13b1784f96d74684dcfbd5107feef4ade85cd9940fbc0eeda94fe630ba6b
 
 RUN true \
     # Prepare container runtime environment
