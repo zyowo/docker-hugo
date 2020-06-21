@@ -3,17 +3,27 @@ FROM golang:1.14.4-alpine3.12@sha256:9887985d9de3d1c2a37be9e2e9c6dbc44f4cbcc7afe
 # renovate: datasource=github-tags depName=gohugoio/hugo
 ENV HUGO_VERSION="v0.72.0"
 
+# renovate: datasource=repology depName=alpine_3_12/gcc
+ENV GCC_VERSION="9.3.0-r2"
 # renovate: datasource=repology depName=alpine_3_12/git
 ENV GIT_VERSION="2.26.2-r0"
+# renovate: datasource=repology depName=alpine_3_12/g++
+ENV GPP_VERSION="9.3.0-r2"
+# renovate: datasource=repology depName=alpine_3_12/musl-dev
+ENV MUSL_DEV_VERSION="1.1.24-r9"
 
 WORKDIR /build/src
 RUN true \
     # Install build dependencies
     && apk add --no-cache --virtual .build-deps \
+        gcc="${GCC_VERSION}" \
         git="${GIT_VERSION}" \
-    # Build oauth2-proxy from sources
+        g++="${GPP_VERSION}" \
+        musl-dev="${MUSL_DEV_VERSION}" \
+    # Build hugo from sources
+    # We need to use cgo for building the extended version
     && git clone --depth 1 -b "${HUGO_VERSION}" https://github.com/gohugoio/hugo.git . \
-    && CGO_ENABLED=0 go build -ldflags="-s -w" -o /build/bin/hugo . \
+    && CGO_ENABLED=1 go build -ldflags="-s -w" -o /build/bin/hugo --tags extended . \
     # Uninstall build dependencies
     && apk del --purge --no-cache .build-deps \
     && true
