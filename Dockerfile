@@ -30,7 +30,13 @@ RUN true \
 
 FROM snapserv/alpine:3.12.0-4@sha256:314d13b1784f96d74684dcfbd5107feef4ade85cd9940fbc0eeda94fe630ba6b
 
+# renovate: datasource=repology depName=alpine_3_12/libstdc++
+ENV LIBSTDCPP_VERSION="9.3.0-r2"
+
 RUN true \
+    # Install runtime dependencies
+    && apk add --no-cache \
+        libstdc++="${LIBSTDCPP_VERSION}" \
     # Prepare container runtime environment
     && ctutil account -u 2000 -g 2000 hugo \
     && ctutil directory -u hugo -g hugo -m 0700 \
