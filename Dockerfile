@@ -1,7 +1,7 @@
 FROM golang:1.14.5-alpine3.12@sha256:a70d1bc956c6575a1b0424e959624ca52c337e2c4ff56c0989ee491c0edbb2ea AS builder
 
 # renovate: datasource=github-tags depName=gohugoio/hugo
-ENV HUGO_VERSION="v0.74.1"
+ENV HUGO_VERSION="v0.74.2"
 
 # renovate: datasource=repology depName=alpine_3_12/gcc
 ENV GCC_VERSION="9.3.0-r2"
