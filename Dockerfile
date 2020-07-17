@@ -28,7 +28,7 @@ RUN true \
     && apk del --purge --no-cache .build-deps \
     && true
 
-FROM snapserv/alpine:3.12.0-8@sha256:a108413de94e04d10a0861cbce840ffe6a5b06913eedb591a058aa7da6f0ac8e
+FROM snapserv/alpine:3.12.0-9@sha256:118a51052837aeddd81f136818d2c9c0a0bdd3fa13149623beb0333d325f2ccb
 
 # renovate: datasource=repology depName=alpine_3_12/libstdc++
 ENV LIBSTDCPP_VERSION="9.3.0-r2"
