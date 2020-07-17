@@ -1,4 +1,4 @@
-FROM golang:1.14.5-alpine3.12@sha256:a70d1bc956c6575a1b0424e959624ca52c337e2c4ff56c0989ee491c0edbb2ea AS builder
+FROM golang:1.14.6-alpine3.12@sha256:70d49538b8f7acd5b71e84f81bebf7667f25017308324a91f312a9830a618f3d AS builder
 
 # renovate: datasource=github-tags depName=gohugoio/hugo
 ENV HUGO_VERSION="v0.74.2"
